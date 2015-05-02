@@ -21,7 +21,7 @@ public class SumWithThread {
         int[] toArray = IntStream.rangeClosed(0, MAX).toArray();
         testWithThread(toArray);
         testWithSingleThread(toArray);
-        testWithStreamParalell(IntStream.rangeClosed(0, MAX).parallel());
+        testWithStreamParalell();
     }
 
     private static void testWithThread(int[] toArray) throws InterruptedException {
@@ -35,16 +35,19 @@ public class SumWithThread {
         for (int i = 0; i < THREAD_COUNT; i++) {
             sumThreads[i].join();
         }
+        //---------------------------------------------------------------
         long sumOfDuration = 0;
         for (int i = 0; i < THREAD_COUNT; i++) {
             System.out.println(sumThreads[i].getName() + " : " + sumThreads[i].getDuration());
             sumOfDuration += sumThreads[i].getDuration();
         }
+        //---------------------------------------------------------------
 
         System.out.println("Overall time = " + sumOfDuration);
     }
 
     private static void testWithSingleThread(int[] array) {
+        //---------------------------------------------------------------
         long startTime = System.nanoTime();
         for (int t = 0; t < THREAD_COUNT; t++) {
             int sum = 0;
@@ -53,14 +56,23 @@ public class SumWithThread {
             }
         }
         long endTime = System.nanoTime();
+        //---------------------------------------------------------------
         long duration = endTime - startTime;
         System.out.println("Overall time = " + duration);
     }
 
-    private static void testWithStreamParalell(IntStream stream) {
+    private static void testWithStreamParalell() {
+        IntStream[] parallels = new IntStream[THREAD_COUNT];
+        for (int t = 0; t < THREAD_COUNT; t++) {
+            parallels[t] = IntStream.rangeClosed(0, MAX).parallel();
+        }
+        //---------------------------------------------------------------
         long startTime = System.nanoTime();
-        stream.sum();
+        for (int t = 0; t < THREAD_COUNT; t++) {
+            parallels[t].sum();
+        }
         long endTime = System.nanoTime();
+        //---------------------------------------------------------------
         long duration = endTime - startTime;
         System.out.println("Overall time = " + duration);
     }
