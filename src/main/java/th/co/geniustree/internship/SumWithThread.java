@@ -15,11 +15,13 @@ import java.util.stream.IntStream;
 public class SumWithThread {
 
     public static final int THREAD_COUNT = 10;
+    public static final int MAX = 100000000;
 
     public static void main(String[] args) throws InterruptedException {
-        int[] toArray = IntStream.rangeClosed(0, 100000000).toArray();
+        int[] toArray = IntStream.rangeClosed(0, MAX).toArray();
         testWithThread(toArray);
         testWithSingleThread(toArray);
+        testWithStreamParalell(IntStream.rangeClosed(0, MAX).parallel());
     }
 
     private static void testWithThread(int[] toArray) throws InterruptedException {
@@ -50,6 +52,14 @@ public class SumWithThread {
                 sum += array[i];
             }
         }
+        long endTime = System.nanoTime();
+        long duration = endTime - startTime;
+        System.out.println("Overall time = " + duration);
+    }
+
+    private static void testWithStreamParalell(IntStream stream) {
+        long startTime = System.nanoTime();
+        stream.sum();
         long endTime = System.nanoTime();
         long duration = endTime - startTime;
         System.out.println("Overall time = " + duration);
